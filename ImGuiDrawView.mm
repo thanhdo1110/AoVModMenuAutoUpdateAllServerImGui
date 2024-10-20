@@ -116,16 +116,6 @@ bool IsSkillDirControlRotate(void *instance, int skillSlotType) {
     return _IsSkillDirControlRotate(instance, skillSlotType); 
 }
 
-static bool buffno = false;
-void (*_SetHpAndEpToInitialValue)(void *player, int hpPercent, int epPercent);
-void SetHpAndEpToInitialValue(void *player, int hpPercent, int epPercent) {
-    if (player != NULL && buffno) {
-        hpPercent = -999999;
-        epPercent = -999999;
-    }
-    _SetHpAndEpToInitialValue(player, hpPercent, epPercent);
-}
-
 
 bool AimSkill;
 int Radius = 25;
@@ -247,8 +237,6 @@ void initial_setup(){
     Il2CppMethod methodAccess("Project.Plugins_d.dll");
     hackmap = methodAccess.getClass("NucleusDrive.Logic", "LVActorLinker").getMethod("SetVisible", 3);
 
-    sethp = methodAccess.getClass("NucleusDrive.Logic", "ValuePropertyComponent").getMethod("SetHpAndEpToInitialValue", 2);
-
     updateframelateroffset = methodAccess.getClass("NucleusDrive.Logic", "LFrameSynchr").getMethod("UpdateFrameLater", 0);
 
     Il2CppMethod methodAccess2("Project_d.dll");
@@ -284,8 +272,6 @@ void initial_setup(){
         DobbyHook((void *)getRealOffset(CamOffset), (void *)_cam, (void **)&cam);
         DobbyHook((void *)getRealOffset(UpdateOffset), (void *)_Update, (void **)&Update);
         DobbyHook((void *)getRealOffset(HighrateOffset), (void *)_highrate, (void **)&highrate);
-
-        DobbyHook((void *)getRealOffset(sethp), (void *)SetHpAndEpToInitialValue, (void **)&_SetHpAndEpToInitialValue);
 
         DobbyHook((void *)getRealOffset(IsSmartUseOffset), (void *)IsSmartUse, (void **)&_IsSmartUse);
         DobbyHook((void *)getRealOffset(CameraMoveOffset), (void *)get_IsUseCameraMoveWithIndicator, (void **)&_get_IsUseCameraMoveWithIndicator);
@@ -474,8 +460,6 @@ static bool MenDeal = true;
                 ImGui::Checkbox("Bật Hack Map", &map);
                 ImGui::SameLine();
                 ImGui::Checkbox("Ẩn Tia Elsu", &antia);
-                ImGui::SameLine();
-                ImGui::Checkbox("Buff Nổ", &buffno);
                 ImGui::TableNextColumn();
                 ImGui::Separator();
                 ImGui::Checkbox("Khóa Camera", &lockcam);
